@@ -1,65 +1,99 @@
 package Model;
 
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Set;
 
-/**
- * Model que encapsula la lògica del compressor de Huffman.
- * <p>
- * Només conté les operacions per construir l'arbre i obtenir els codis
- * corresponents a cada símbol.
- */
+// Aquesta classe guarda TOTES les dades que necessita el compressor i descompressor de Huffman.
+// Serveix com a "magatzem" d'informació: arbre, codis, freqüències, fitxers...
 public class Dades {
 
-    private Node root;
-    private final Map<Byte, String> codeMap = new HashMap<>();
-    private PriorityQueue<Node> pq = new PriorityQueue<>();
-    private Map<Byte, Integer> freq = new HashMap<>();
+    private Node root; // L'arrel de l'arbre de Huffman
+    private final Map<Byte, String> codeMap = new HashMap<>(); // Mapa de codis Huffman (símbol → codi binari)
+    private PriorityQueue<Node> queue = new PriorityQueue<>(); // Cua de prioritats per construir l'arbre
+    private Map<Byte, Integer> freq = new HashMap<>(); // Mapa de freqüències (símbol → nombre de vegades)
+    private Path input; // Ruta del fitxer d'entrada
+    private Path output; // Ruta del fitxer de sortida
 
     public Dades() {
+        // Constructor buit, perquè les dades es van omplint a mida que calen
     }
 
-    /** Retorna el mapa símbol → codi binari (com String de '0'/'1'). */
+    // ------- GETTERS i SETTERS per les RUTES dels fitxers -------
+
+    // Defineix la ruta del fitxer d'entrada
+    public void setInput(Path p) {
+        input = p;
+    }
+
+    // Retorna la ruta del fitxer d'entrada
+    public Path getInput() {
+        return input;
+    }
+
+    // Defineix la ruta del fitxer de sortida
+    public void setOutput(Path p) {
+        output = p;
+    }
+
+    // Retorna la ruta del fitxer de sortida
+    public Path getOutput() {
+        return output;
+    }
+
+    // ------- DADES RELACIONADES AMB LA CODIFICACIÓ HUFFMAN -------
+
+    // Retorna el mapa símbol → codi binari (ex: 'a' → "101")
     public Map<Byte, String> getCodeMap() {
         return codeMap;
     }
 
-    public PriorityQueue<Node> getPQ() {
-        return pq;
+    // Retorna la cua de prioritats usada per construir l'arbre
+    public PriorityQueue<Node> getQueue() {
+        return queue;
     }
 
+    // Defineix l'arrel de l'arbre de Huffman
     public void setRoot(Node n) {
         root = n;
     }
 
+    // Retorna quants nodes hi ha actualment a la cua de prioritats
     public int getQueueSize() {
-        return pq.size();
+        return queue.size();
     }
 
+    // Afegeix un node nou a la cua de prioritats
     public void addToQueue(Node n) {
-        pq.add(n);
+        queue.add(n);
     }
 
+    // Treu el node amb menor freqüència de la cua (el més prioritari)
     public Node pollFromQueue() {
-        return pq.poll();
+        return queue.poll();
     }
 
-    /** Retorna l'arrel de l'arbre (útil per a visualitzacions). */
+    // Retorna l'arrel de l'arbre de Huffman
     public Node getRoot() {
         return root;
     }
 
+    // ------- FREQÜÈNCIES DELS SÍMBOLS -------
+
+    // Retorna el mapa de freqüències (símbol → quantes vegades apareix)
     public Map<Byte, Integer> getFreq() {
         return freq;
     }
 
+    // Retorna quants símbols diferents hi ha (la mida del mapa de freqüències)
     public int getFreqSize() {
         return freq.size();
     }
 
+    // Retorna les parelles símbol-freqüència (per poder iterar per elles)
     public Set<Entry<Byte, Integer>> getFreqEntrySet() {
         return freq.entrySet();
     }
