@@ -19,7 +19,6 @@ public class Dades {
     private Path output; // Ruta del fitxer de sortida
 
     public Dades() {
-        // Constructor buit, perquè les dades es van omplint a mida que calen
     }
 
     // ------- GETTERS i SETTERS per les RUTES dels fitxers -------
@@ -93,7 +92,7 @@ public class Dades {
         return freq.size();
     }
 
-    // Retorna les parelles símbol-freqüència (per poder iterar per elles)
+    // Retorna les parelles símbol-freqüència
     public Set<Entry<Byte, Integer>> getFreqEntrySet() {
         return freq.entrySet();
     }
