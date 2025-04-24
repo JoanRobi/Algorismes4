@@ -19,6 +19,9 @@ public class Node implements Comparable<Node> {
         this.right = null;
     }
 
+    public int getFreq() {
+        return freq;
+    }
     // CONSTRUCTOR per a NODES INTERNS (combina dos nodes fills)
     public Node(Node left, Node right) {
         this.value = 0; // No té símbol (només les fulles en tenen)
