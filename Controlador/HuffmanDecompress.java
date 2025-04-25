@@ -25,6 +25,7 @@ public class HuffmanDecompress implements Notificar {
 
     // DESCOMPRIMEIX el fitxer d'entrada i escriu el resultat al fitxer de sortida
     public void decompress() throws IOException {
+        long start =  System.nanoTime();
         try (DataInputStream in = new DataInputStream(
                 new BufferedInputStream(new FileInputStream(dades.getInput().toFile())));
                 BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(dades.getOutput().toFile()))) {
@@ -62,6 +63,10 @@ public class HuffmanDecompress implements Notificar {
                 }
             }
         }
+        long end = System.nanoTime();
+        long durada = start - end;
+        durada /= Math.pow(10,9);
+        dades.setTempsDescompresio(durada);
     }
 
     // Construeix l'arbre de Huffman a partir del mapa de freqüències

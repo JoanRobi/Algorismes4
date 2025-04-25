@@ -2,23 +2,26 @@ package Vista;
 
 import Controlador.HuffmanCompress;
 import Controlador.HuffmanDecompress;
+import Controlador.Notificar;
 import Model.Dades;
 import Model.Node;
+import Main.Main;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.Map;
 
 // Interfície gràfica per comprimir i descomprimir fitxers amb l'algorisme de Huffman.
-public class InterficieHuffman extends JPanel {
-    private final Dades dades;
-    private final HuffmanCompress compressor;
-    private final HuffmanDecompress descompressor;
+public class InterficieHuffman extends JPanel implements Notificar, ActionListener {
+    private Dades dades;
+    private final Main main;
 
     private final JTextField campEntrada;
     private final JTextField campSortida;
@@ -36,10 +39,9 @@ public class InterficieHuffman extends JPanel {
 
     private final JTextArea areaRegistres;
 
-    public InterficieHuffman() {
-        dades = new Dades();
-        compressor = new HuffmanCompress(dades);
-        descompressor = new HuffmanDecompress(dades);
+    public InterficieHuffman(Dades dades, Main main) {
+        this.dades = dades;
+        this.main = main;
 
         campEntrada = new JTextField(); campEntrada.setEditable(false);
         campSortida = new JTextField(); campSortida.setEditable(false);
@@ -60,7 +62,6 @@ public class InterficieHuffman extends JPanel {
         areaRegistres.setEditable(false);
 
         inicialitzaDiseny();
-        inicialitzaAccions();
     }
 
     private void inicialitzaDiseny() {
@@ -115,11 +116,22 @@ public class InterficieHuffman extends JPanel {
         add(escRegistres, BorderLayout.SOUTH);
     }
 
-    private void inicialitzaAccions() {
-        botoTriaEntrada.addActionListener(e -> triaFitxerEntrada());
-        botoTriaSortida.addActionListener(e -> triaFitxerSortida());
-        botoComprimir.addActionListener(e -> comprimir());
-        botoDescomprimir.addActionListener(e -> descomprimir());
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == botoTriaEntrada){
+            triaFitxerEntrada();
+        }
+        if(e.getSource() == botoTriaSortida){
+            triaFitxerSortida();
+        }
+        if(e.getSource() == botoComprimir){
+            main.notificar("comprimir");
+            comprimir();
+        }
+        if(e.getSource() == botoDescomprimir){
+            main.notificar("descomprimir");
+            descomprimir();
+        }
     }
 
     private void triaFitxerEntrada() {
@@ -144,12 +156,8 @@ public class InterficieHuffman extends JPanel {
 
     private void comprimir() {
         try {
-            long ini = System.nanoTime();
-            compressor.compress();
-            long fi = System.nanoTime();
-            double secs = (fi - ini) / 1e9;
-            actualitzaVistaDespresDeComprimir(secs);
-            areaRegistres.append(String.format("Compressió feta en %.3f s\n", secs));
+            actualitzaVistaDespresDeComprimir(dades.getTempsCompresio());
+            areaRegistres.append(String.format("Compressió feta en %.3f s\n", dades.getTempsCompresio()));
         } catch (Exception ex) {
             areaRegistres.append("Error durant compressió: " + ex.getMessage() + "\n");
         }
@@ -157,11 +165,7 @@ public class InterficieHuffman extends JPanel {
 
     private void descomprimir() {
         try {
-            long ini = System.nanoTime();
-            descompressor.decompress();
-            long fi = System.nanoTime();
-            double secs = (fi - ini) / 1e9;
-            areaRegistres.append(String.format("Descompressió feta en %.3f s\n", secs));
+            areaRegistres.append(String.format("Descompressió feta en %.3f s\n", dades.getTempsDescompresio()));
         } catch (Exception ex) {
             areaRegistres.append("Error durant descompressió: " + ex.getMessage() + "\n");
         }
@@ -211,5 +215,12 @@ public class InterficieHuffman extends JPanel {
             parent.add(creaNodeArbre(node.getRight()));
             return parent;
         }
+    }
+
+    @Override
+    public void notificar(String s) {
+
+
+
     }
 }

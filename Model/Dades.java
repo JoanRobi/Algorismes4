@@ -17,11 +17,29 @@ public class Dades {
     private Map<Byte, Integer> freq = new HashMap<>(); // Mapa de freqüències (símbol → nombre de vegades)
     private Path input; // Ruta del fitxer d'entrada
     private Path output; // Ruta del fitxer de sortida
+    private double tempsCompresio;
+    private double tempsDescompresio;
 
     public Dades() {
     }
 
     // ------- GETTERS i SETTERS per les RUTES dels fitxers -------
+
+    public void setTempsCompresio(double temps){
+        this.tempsCompresio = temps;
+    }
+
+    public void setTempsDescompresio(double t){
+        this.tempsDescompresio = t;
+    }
+
+    public double getTempsCompresio(){
+        return tempsCompresio;
+    }
+
+    public double getTempsDescompresio(){
+        return tempsDescompresio;
+    }
 
     // Defineix la ruta del fitxer d'entrada
     public void setInput(Path p) {
