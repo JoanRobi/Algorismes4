@@ -2,10 +2,7 @@ package Main;
 
 import javax.swing.JFrame;
 
-import Controlador.PuntLluny;
-import Controlador.Punts;
-import Controlador.Notificar;
-import Controlador.PuntsRecursiu;
+import Controlador.*;
 import Model.Dades;
 import Vista.GUI;
 
