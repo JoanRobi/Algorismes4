@@ -1,7 +1,5 @@
 package Vista;
 
-import Controlador.HuffmanCompress;
-import Controlador.HuffmanDecompress;
 import Controlador.Notificar;
 import Model.Dades;
 import Model.Node;
@@ -16,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 
 // Interfície gràfica per comprimir i descomprimir fitxers amb l'algorisme de Huffman.
@@ -26,7 +25,7 @@ public class InterficieHuffman extends JPanel implements Notificar, ActionListen
     private final JTextField campEntrada;
     private final JTextField campSortida;
     private final JButton botoTriaEntrada;
-    private final JButton botoTriaSortida;
+    // private final JButton botoTriaSortida;
     private final JButton botoComprimir;
     private final JButton botoDescomprimir;
 
@@ -43,16 +42,18 @@ public class InterficieHuffman extends JPanel implements Notificar, ActionListen
         this.dades = dades;
         this.main = main;
 
-        campEntrada = new JTextField(); campEntrada.setEditable(false);
-        campSortida = new JTextField(); campSortida.setEditable(false);
+        campEntrada = new JTextField();
+        campEntrada.setEditable(false);
+        campSortida = new JTextField();
+        campSortida.setEditable(true);
         botoTriaEntrada = new JButton("Selecciona fitxer d'entrada");
-        botoTriaSortida = new JButton("Selecciona fitxer de sortida");
+        // botoTriaSortida = new JButton("Selecciona fitxer de sortida");
 
         botoComprimir = new JButton("Comprimir");
         botoDescomprimir = new JButton("Descomprimir");
 
         arbre = new JTree(new DefaultMutableTreeNode("Arbre de Huffman"));
-        taula = new JTable(new DefaultTableModel(new Object[]{"Símbol", "Freq", "Codi"}, 0));
+        taula = new JTable(new DefaultTableModel(new Object[] { "Símbol", "Freq", "Codi" }, 0));
 
         etiquetaTemps = new JLabel("Temps: N/D");
         etiquetaPercentatge = new JLabel("Compressió: N/D");
@@ -72,21 +73,32 @@ public class InterficieHuffman extends JPanel implements Notificar, ActionListen
         gbc.insets = new Insets(4, 4, 4, 4);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        gbc.gridx = 0; gbc.gridy = 0;
-        panelFitxers.add(new JLabel("Fitxer d'entrada:"), gbc);
-        gbc.gridx = 1; gbc.weightx = 1.0;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panelFitxers.add(new JLabel("Ruta fitxer d'entrada:"), gbc);
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
         panelFitxers.add(campEntrada, gbc);
-        gbc.gridx = 2; gbc.weightx = 0;
+        gbc.gridx = 2;
+        gbc.weightx = 0;
+        botoTriaEntrada.addActionListener(this);
         panelFitxers.add(botoTriaEntrada, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 1;
-        panelFitxers.add(new JLabel("Fitxer de sortida:"), gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panelFitxers.add(new JLabel("Nom del fitxer de sortida:"), gbc);
         gbc.gridx = 1;
         panelFitxers.add(campSortida, gbc);
         gbc.gridx = 2;
-        panelFitxers.add(botoTriaSortida, gbc);
+
+        // botoTriaSortida.addActionListener(this);
+        // panelFitxers.add(botoTriaSortida, gbc);
+        // panelFitxers.add(new JLabel("Introdueix nom del fitxer de sortida: "), this);
+        // panelFitxers.add(stringSortida, this);
 
         JPanel panelBotons = new JPanel();
+        botoComprimir.addActionListener(this);
+        botoDescomprimir.addActionListener(this);
         panelBotons.add(botoComprimir);
         panelBotons.add(botoDescomprimir);
 
@@ -118,19 +130,33 @@ public class InterficieHuffman extends JPanel implements Notificar, ActionListen
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == botoTriaEntrada){
+        if (e.getSource() == botoTriaEntrada) {
             triaFitxerEntrada();
         }
-        if(e.getSource() == botoTriaSortida){
-            triaFitxerSortida();
+        /*
+         * if (e.getSource() == botoTriaSortida) {
+         * triaFitxerSortida();
+         * }
+         */
+        if (e.getSource() == botoComprimir) {
+            String ruta = campSortida.getText();
+            // Comprobar si la ruta ya termina con ".huff"
+            if (!ruta.endsWith(".huff")) {
+                ruta += ".huff"; // Si no, añadir la extensión
+            }
+            // Establecer la salida
+            dades.setOutput(Path.of(ruta));
+            main.notificar("comprimir"); // Notificar al Main que inicie la compresión
         }
-        if(e.getSource() == botoComprimir){
-            main.notificar("comprimir");
-            comprimir();
-        }
-        if(e.getSource() == botoDescomprimir){
-            main.notificar("descomprimir");
-            descomprimir();
+        if (e.getSource() == botoDescomprimir) {
+            String ruta = campSortida.getText();
+            // Comprobar si la ruta ya termina con ".txt"
+            if (!ruta.endsWith(".txt")) {
+                ruta += ".txt"; // Si no, añadir la extensión
+            }
+            // Establecer la salida
+            dades.setOutput(Path.of(ruta));
+            main.notificar("descomprimir"); // Notificar al Main que inicie la descompresión
         }
     }
 
@@ -176,7 +202,7 @@ public class InterficieHuffman extends JPanel implements Notificar, ActionListen
         DefaultMutableTreeNode nodeArrel = creaNodeArbre(arrel);
         arbre.setModel(new DefaultTreeModel(nodeArrel));
 
-        DefaultTableModel model = new DefaultTableModel(new Object[]{"Símbol", "Freq", "Codi"}, 0);
+        DefaultTableModel model = new DefaultTableModel(new Object[] { "Símbol", "Freq", "Codi" }, 0);
         Map<Byte, String> codis = dades.getCodeMap();
         Map<Byte, Integer> freqs = dades.getFreq();
         long total = freqs.values().stream().mapToLong(i -> i).sum();
@@ -185,7 +211,7 @@ public class InterficieHuffman extends JPanel implements Notificar, ActionListen
             byte b = e.getKey();
             String simb = (b >= 32 && b <= 126) ? "'" + (char) b + "'" : Byte.toString(b);
             int f = freqs.getOrDefault(b, 0);
-            model.addRow(new Object[]{simb, f, e.getValue()});
+            model.addRow(new Object[] { simb, f, e.getValue() });
         }
 
         taula.setModel(model);
@@ -219,8 +245,13 @@ public class InterficieHuffman extends JPanel implements Notificar, ActionListen
 
     @Override
     public void notificar(String s) {
-
-
-
+        switch (s) {
+            case "comprimit":
+                this.comprimir();
+                break;
+            case "descomprimit":
+                this.descomprimir();
+                break;
+        }
     }
 }

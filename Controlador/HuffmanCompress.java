@@ -8,6 +8,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
+
+import Main.Main;
 import Model.Dades;
 import Model.Node;
 
@@ -16,14 +18,16 @@ public class HuffmanCompress implements Notificar {
 
     private Dades dades; // Objecte on guardem totes les dades de la compressió (freqüències, arbre,
                          // codis, etc.)
+    private Main main;
 
-    public HuffmanCompress(Dades dades) {
+    public HuffmanCompress(Dades dades, Main main) {
         this.dades = dades;
+        this.main = main;
     }
 
     // COMPRIMEIX el fitxer d'entrada i el guarda al fitxer de sortida
     public void compress() throws IOException {
-        long start =  System.nanoTime();
+        long start = System.nanoTime();
         // 1. Llegeix TOT el fitxer d'entrada com un array de bytes
         byte[] data = readAllBytes(dades.getInput());
 
@@ -69,8 +73,10 @@ public class HuffmanCompress implements Notificar {
 
         long end = System.nanoTime();
         long durada = start - end;
-        durada /= Math.pow(10,9);
+        durada /= Math.pow(10, 9);
         dades.setTempsCompresio(durada);
+
+        main.notificar("comprimit"); // Avisa al main de que el fitxer ja s'ha comprimit
     }
 
     // Llegeix TOT el fitxer d'entrada com un array de bytes
@@ -121,23 +127,31 @@ public class HuffmanCompress implements Notificar {
     }
 
     // MAIN de prova ràpida (per comprovar que la compressió funciona)
-    public static void main(String[] args) throws Exception {
-        if (args.length != 2) {
-            System.err.println("Ús: java CompressionController <input> <output(.huff)>");
-            return;
-        }
-        Dades dades = new Dades(); // Crea l'objecte amb les dades
-        HuffmanCompress huff = new HuffmanCompress(dades);
-        dades.setInput(Path.of(args[0])); // Defineix el fitxer d'entrada
-        dades.setOutput(Path.of(args[1])); // Defineix el fitxer de sortida
-        huff.compress(); // Comprimeix!
-        System.out.println("Compressió completada!");
-    }
+    /*
+     * public static void main(String[] args) throws Exception {
+     * if (args.length != 2) {
+     * System.err.println("Ús: java CompressionController <input> <output(.huff)>");
+     * return;
+     * }
+     * Dades dades = new Dades(); // Crea l'objecte amb les dades
+     * HuffmanCompress huff = new HuffmanCompress(dades);
+     * dades.setInput(Path.of(args[0])); // Defineix el fitxer d'entrada
+     * dades.setOutput(Path.of(args[1])); // Defineix el fitxer de sortida
+     * huff.compress(); // Comprimeix!
+     * System.out.println("Compressió completada!");
+     * }
+     */
 
     @Override
     public void notificar(String s) {
         // Aquesta funció està preparada per afegir notificacions (GUI), però de moment
         // no fa res
-        throw new UnsupportedOperationException("Unimplemented method 'notificar'");
+        if (s.equals("comprimir")) {
+            try {
+                this.compress();
+            } catch (IOException e) {
+                e.toString();
+            }
+        }
     }
 }

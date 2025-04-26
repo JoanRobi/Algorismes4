@@ -11,6 +11,8 @@ public class Main implements Notificar {
     private InterficieHuffman finestra;
     private Dades dades;
     private JFrame frame;
+    private HuffmanCompress huffmanCompress;
+    private HuffmanDecompress huffmanDecompress;
 
     public static void main(String[] args) {
         (new Main()).iniciar();
@@ -18,9 +20,11 @@ public class Main implements Notificar {
 
     public void iniciar() {
         dades = new Dades();
-        frame = new JFrame("Càlcul punts més llunyans i més propers");
+        huffmanCompress = new HuffmanCompress(dades, this);
+        huffmanDecompress = new HuffmanDecompress(dades, this);
+        frame = new JFrame("Compressió i descompressió d'arxius mitjançant Huffman");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        finestra = new InterficieHuffman();
+        finestra = new InterficieHuffman(dades, this);
         frame.setContentPane(finestra);
         frame.pack();
         frame.setLocationRelativeTo(null);
@@ -30,17 +34,18 @@ public class Main implements Notificar {
     @Override
     public void notificar(String s) {
         switch (s) {
-            case "aturar":
-
+            case "comprimit":
+                finestra.notificar("comprimit");
                 break;
-            case "procesN2":
+            case "descomprimit":
+                finestra.notificar("descomprimit");
                 break;
-            case "procesNlogN":
+            case "comprimir":
+                huffmanCompress.notificar("comprimir");
                 break;
-            // Procés punt llunyà
-            case "puntLlunya":
-            case "pintar":
-           
+            case "descomprimir":
+                huffmanDecompress.notificar("descomprimir");
+                break;
         }
     }
 }

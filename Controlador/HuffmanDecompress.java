@@ -6,11 +6,11 @@ import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
 
+import Main.Main;
 import Model.Dades;
 import Model.Node;
 
@@ -18,14 +18,16 @@ import Model.Node;
 public class HuffmanDecompress implements Notificar {
 
     private final Dades dades; // Objecte amb les dades de la descompressió (arbre, etc.)
+    private Main main;
 
-    public HuffmanDecompress(Dades dades) {
+    public HuffmanDecompress(Dades dades, Main main) {
         this.dades = dades;
+        this.main = main;
     }
 
     // DESCOMPRIMEIX el fitxer d'entrada i escriu el resultat al fitxer de sortida
     public void decompress() throws IOException {
-        long start =  System.nanoTime();
+        long start = System.nanoTime();
         try (DataInputStream in = new DataInputStream(
                 new BufferedInputStream(new FileInputStream(dades.getInput().toFile())));
                 BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(dades.getOutput().toFile()))) {
@@ -65,8 +67,10 @@ public class HuffmanDecompress implements Notificar {
         }
         long end = System.nanoTime();
         long durada = start - end;
-        durada /= Math.pow(10,9);
+        durada /= Math.pow(10, 9);
         dades.setTempsDescompresio(durada);
+
+        main.notificar("descomprimit"); // Avisa al main que la descompressió ja està feta
     }
 
     // Construeix l'arbre de Huffman a partir del mapa de freqüències
@@ -91,22 +95,32 @@ public class HuffmanDecompress implements Notificar {
     }
 
     // MAIN de prova ràpida (per comprovar que la descompressió funciona)
-    public static void main(String[] args) throws Exception {
-        if (args.length != 2) {
-            System.err.println("Ús: java HuffmanDecompress <input.huff> <output>");
-            return;
-        }
-        Dades dades = new Dades();
-        dades.setInput(Path.of(args[0])); // Defineix el fitxer d'entrada (.huff)
-        dades.setOutput(Path.of(args[1])); // Defineix el fitxer de sortida (original recuperat)
-        HuffmanDecompress hd = new HuffmanDecompress(dades);
-        hd.decompress(); // Fa la descompressió!
-        System.out.println("Descompressió completada!");
-    }
+    /*
+     * public static void main(String[] args) throws Exception {
+     * if (args.length != 2) {
+     * System.err.println("Ús: java HuffmanDecompress <input.huff> <output>");
+     * return;
+     * }
+     * Dades dades = new Dades();
+     * dades.setInput(Path.of(args[0])); // Defineix el fitxer d'entrada (.huff)
+     * dades.setOutput(Path.of(args[1])); // Defineix el fitxer de sortida (original
+     * recuperat)
+     * HuffmanDecompress hd = new HuffmanDecompress(dades);
+     * hd.decompress(); // Fa la descompressió!
+     * System.out.println("Descompressió completada!");
+     * }
+     */
 
     @Override
     public void notificar(String s) {
         // Aquesta funció està preparada per enviar notificacions (per exemple, a la
         // GUI), però encara no fa res
+        if (s.equals("descomprimir")) {
+            try {
+                this.decompress();
+            } catch (IOException e) {
+                e.toString();
+            }
+        }
     }
 }
