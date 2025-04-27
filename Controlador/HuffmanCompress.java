@@ -27,7 +27,7 @@ public class HuffmanCompress implements Notificar {
 
     // COMPRIMEIX el fitxer d'entrada i el guarda al fitxer de sortida
     public void compress() throws IOException {
-        long start = System.nanoTime();
+        double start = System.nanoTime();
         // 1. Llegeix TOT el fitxer d'entrada com un array de bytes
         byte[] data = readAllBytes(dades.getInput());
 
@@ -71,8 +71,8 @@ public class HuffmanCompress implements Notificar {
             }
         }
 
-        long end = System.nanoTime();
-        long durada = start - end;
+        double end = System.nanoTime();
+        double durada = end - start;
         durada /= Math.pow(10, 9);
         dades.setTempsCompresio(durada);
 
