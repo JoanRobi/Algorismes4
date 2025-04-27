@@ -185,6 +185,7 @@ public class InterficieHuffman extends JPanel implements Notificar, ActionListen
             actualitzaVistaDespresDeComprimir(dades.getTempsCompresio());
             areaRegistres.append(String.format("Compressió feta en " + dades.getTempsCompresio() + " s\n"));
         } catch (Exception ex) {
+            ex.printStackTrace();
             areaRegistres.append("Error durant compressió: " + ex.getMessage() + "\n");
         }
     }
@@ -199,6 +200,9 @@ public class InterficieHuffman extends JPanel implements Notificar, ActionListen
 
     private void actualitzaVistaDespresDeComprimir(double tempsSegons) throws Exception {
         Node arrel = dades.getRoot();
+        if (arrel == null) {
+            throw new IllegalStateException("L'arbre de Huffman no s'ha generat");
+        }
         DefaultMutableTreeNode nodeArrel = creaNodeArbre(arrel);
         arbre.setModel(new DefaultTreeModel(nodeArrel));
 
@@ -232,15 +236,29 @@ public class InterficieHuffman extends JPanel implements Notificar, ActionListen
     }
 
     private DefaultMutableTreeNode creaNodeArbre(Node node) {
-        if (node.isLeaf()) {
-            String etq = String.format("'%c' (%d)", node.getValue(), node.getFreq());
-            return new DefaultMutableTreeNode(etq);
-        } else {
-            DefaultMutableTreeNode parent = new DefaultMutableTreeNode(node.getFreq());
-            parent.add(creaNodeArbre(node.getLeft()));
-            parent.add(creaNodeArbre(node.getRight()));
-            return parent;
+        if (node == null) {
+            // Retornem un node buit o simplement null; aquí el descartem.
+            return new DefaultMutableTreeNode("∅");
         }
+
+        // 2. Fulla
+        if (node.isLeaf()) {
+            // Mostrem el símbol si és imprimible; altrament el byte numèric.
+            String simb = (node.getValue() >= 32 && node.getValue() <= 126)
+                    ? "'" + (char) node.getValue() + "'"
+                    : Byte.toString(node.getValue());
+
+            String etq = String.format("%s (%d)", simb, node.getFreq());
+            return new DefaultMutableTreeNode(etq);
+        }
+
+        // 3. Node intern (poden faltar fills)
+        DefaultMutableTreeNode parent = new DefaultMutableTreeNode(node.getFreq());
+
+        if (node.getLeft()  != null) parent.add(creaNodeArbre(node.getLeft()));
+        if (node.getRight() != null) parent.add(creaNodeArbre(node.getRight()));
+
+        return parent;
     }
 
     @Override
