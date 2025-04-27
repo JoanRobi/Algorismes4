@@ -27,7 +27,7 @@ public class HuffmanDecompress implements Notificar {
 
     // DESCOMPRIMEIX el fitxer d'entrada i escriu el resultat al fitxer de sortida
     public void decompress() throws IOException {
-        long start = System.nanoTime();
+        double start = System.nanoTime();
         try (DataInputStream in = new DataInputStream(
                 new BufferedInputStream(new FileInputStream(dades.getInput().toFile())));
                 BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(dades.getOutput().toFile()))) {
@@ -65,8 +65,8 @@ public class HuffmanDecompress implements Notificar {
                 }
             }
         }
-        long end = System.nanoTime();
-        long durada = start - end;
+        double end = System.nanoTime();
+        double durada = end - start;
         durada /= Math.pow(10, 9);
         dades.setTempsDescompresio(durada);
 
