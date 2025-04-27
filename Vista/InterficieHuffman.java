@@ -183,7 +183,7 @@ public class InterficieHuffman extends JPanel implements Notificar, ActionListen
     private void comprimir() {
         try {
             actualitzaVistaDespresDeComprimir(dades.getTempsCompresio());
-            areaRegistres.append(String.format("Compressió feta en %.3f s\n", dades.getTempsCompresio()));
+            areaRegistres.append(String.format("Compressió feta en " + dades.getTempsCompresio() + " s\n"));
         } catch (Exception ex) {
             areaRegistres.append("Error durant compressió: " + ex.getMessage() + "\n");
         }
@@ -191,7 +191,7 @@ public class InterficieHuffman extends JPanel implements Notificar, ActionListen
 
     private void descomprimir() {
         try {
-            areaRegistres.append(String.format("Descompressió feta en %.3f s\n", dades.getTempsDescompresio()));
+            areaRegistres.append(String.format("Descompressió feta en " + dades.getTempsDescompresio() + " s\n"));
         } catch (Exception ex) {
             areaRegistres.append("Error durant descompressió: " + ex.getMessage() + "\n");
         }
