@@ -116,4 +116,40 @@ public class Dades {
     public Set<Entry<Byte, Integer>> getFreqEntrySet() {
         return freq.entrySet();
     }
+
+    // Construeix l'arbre de Huffman a partir del mapa de freqüències
+    public void buildTree() {
+        // Omple la cua de prioritats amb nodes fulla (un per cada símbol)
+        for (Map.Entry<Byte, Integer> e : freq.entrySet()) {
+            queue.add(new Node(e.getKey(), e.getValue()));
+        }
+
+        // Cas especial: si només hi ha un símbol, afegeix un node dummy
+        if (queue.size() == 1) {
+            queue.add(new Node((byte) 0, 0));
+        }
+
+        // Combina els dos nodes amb menor freqüència fins a tenir un únic arbre
+        while (queue.size() > 1) {
+            Node a = queue.poll();
+            Node b = queue.poll();
+            queue.add(new Node(a, b)); // Crea un nou node intern
+        }
+
+        // El node restant és l'arrel de l'arbre
+        root = queue.poll();
+    }
+
+    // Recursiu: assigna codis binaris a cada símbol (fulla)
+    public void buildCodeMap(Node node, String prefix) {
+        if (node.isLeaf()) {
+            // Si és una fulla, assigna el codi corresponent
+            codeMap.put(node.getValue(), prefix.isEmpty() ? "0" : prefix);
+        } else {
+            // Si és un node intern, continua recorrent (0 cap a l'esquerra, 1 cap a la
+            // dreta)
+            buildCodeMap(node.getLeft(), prefix + "0");
+            buildCodeMap(node.getRight(), prefix + "1");
+        }
+    }
 }

@@ -8,7 +8,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.PriorityQueue;
 
 import Main.Main;
 import Model.Dades;
@@ -48,7 +47,7 @@ public class HuffmanDecompress implements Notificar {
             }
 
             // 2. RECONSTRUEIX l'arbre de Huffman a partir de les freqüències
-            buildTree(freq);
+            dades.buildTree();
 
             // 3. DECODIFICA els bits i escriu els bytes originals
             try (BitInputStream bitIn = new BitInputStream(in)) {
@@ -71,27 +70,6 @@ public class HuffmanDecompress implements Notificar {
         dades.setTempsDescompresio(durada);
 
         main.notificar("descomprimit"); // Avisa al main que la descompressió ja està feta
-    }
-
-    // Construeix l'arbre de Huffman a partir del mapa de freqüències
-    private void buildTree(Map<Byte, Integer> freq) {
-        PriorityQueue<Node> pq = new PriorityQueue<>(); // Cua de prioritats per construir l'arbre
-        for (Map.Entry<Byte, Integer> e : freq.entrySet()) {
-            pq.add(new Node(e.getKey(), e.getValue())); // Crea un node fulla per cada símbol
-        }
-
-        // Cas especial: si només hi ha un símbol, afegeix un node dummy
-        if (pq.size() == 1) {
-            pq.add(new Node((byte) 0, 0));
-        }
-
-        // Combina nodes fins a obtenir un únic arbre (mateix procés que al compressor)
-        while (pq.size() > 1) {
-            Node a = pq.poll();
-            Node b = pq.poll();
-            pq.add(new Node(a, b)); // Crea un nou node intern combinant dos nodes
-        }
-        dades.setRoot(pq.poll()); // L'últim node restant és l'arrel de l'arbre
     }
 
     @Override

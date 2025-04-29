@@ -11,7 +11,6 @@ import java.util.Map;
 
 import Main.Main;
 import Model.Dades;
-import Model.Node;
 
 // Aquesta classe s'encarrega de COMPRIMIR un fitxer utilitzant Huffman.
 public class HuffmanCompress implements Notificar {
@@ -37,7 +36,9 @@ public class HuffmanCompress implements Notificar {
         }
 
         // 3. Construeix l'arbre de Huffman i genera els codis binaris per cada símbol
-        this.build(dades.getFreq());
+        dades.buildTree();
+        // A partir de l'arbre, genera els codis binaris per cada símbol
+        dades.buildCodeMap(dades.getRoot(), "");
 
         // 4. Escriu el fitxer comprimit
         try (DataOutputStream out = new DataOutputStream(
@@ -83,46 +84,6 @@ public class HuffmanCompress implements Notificar {
     private byte[] readAllBytes(Path path) throws IOException {
         try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(path.toFile()))) {
             return in.readAllBytes();
-        }
-    }
-
-    // Construeix l'ARBRE DE HUFFMAN i el MAPA DE CODIS a partir de la taula de
-    // freqüències
-    private void build(Map<Byte, Integer> freq) {
-        // Omple la cua de prioritats amb nodes fulla (un per cada símbol)
-        for (Map.Entry<Byte, Integer> e : freq.entrySet()) {
-            dades.addToQueue(new Node(e.getKey(), e.getValue()));
-        }
-
-        // Cas especial: si només hi ha un símbol, afegeix un node dummy
-        if (dades.getQueueSize() == 1) {
-            dades.addToQueue(new Node((byte) 0, 0));
-        }
-
-        // Combina els dos nodes amb menor freqüència fins a tenir un únic arbre
-        while (dades.getQueueSize() > 1) {
-            Node a = dades.pollFromQueue();
-            Node b = dades.pollFromQueue();
-            dades.addToQueue(new Node(a, b)); // Crea un nou node intern
-        }
-
-        // El node restant és l'arrel de l'arbre
-        dades.setRoot(dades.pollFromQueue());
-
-        // A partir de l'arbre, genera els codis binaris per cada símbol
-        buildCodeMap(dades.getRoot(), "");
-    }
-
-    // Recursiu: assigna codis binaris a cada símbol (fulla)
-    private void buildCodeMap(Node node, String prefix) {
-        if (node.isLeaf()) {
-            // Si és una fulla, assigna el codi corresponent
-            dades.getCodeMap().put(node.getValue(), prefix.isEmpty() ? "0" : prefix);
-        } else {
-            // Si és un node intern, continua recorrent (0 cap a l'esquerra, 1 cap a la
-            // dreta)
-            buildCodeMap(node.getLeft(), prefix + "0");
-            buildCodeMap(node.getRight(), prefix + "1");
         }
     }
 
