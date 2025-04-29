@@ -126,26 +126,8 @@ public class HuffmanCompress implements Notificar {
         }
     }
 
-    // MAIN de prova ràpida (per comprovar que la compressió funciona)
-    /*
-     * public static void main(String[] args) throws Exception {
-     * if (args.length != 2) {
-     * System.err.println("Ús: java CompressionController <input> <output(.huff)>");
-     * return;
-     * }
-     * Dades dades = new Dades(); // Crea l'objecte amb les dades
-     * HuffmanCompress huff = new HuffmanCompress(dades);
-     * dades.setInput(Path.of(args[0])); // Defineix el fitxer d'entrada
-     * dades.setOutput(Path.of(args[1])); // Defineix el fitxer de sortida
-     * huff.compress(); // Comprimeix!
-     * System.out.println("Compressió completada!");
-     * }
-     */
-
     @Override
     public void notificar(String s) {
-        // Aquesta funció està preparada per afegir notificacions (GUI), però de moment
-        // no fa res
         if (s.equals("comprimir")) {
             try {
                 this.compress();

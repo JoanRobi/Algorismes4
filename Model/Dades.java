@@ -23,23 +23,25 @@ public class Dades {
     public Dades() {
     }
 
-    // ------- GETTERS i SETTERS per les RUTES dels fitxers -------
+    // ------- GETTERS i SETTERS pels temps de compressió i descompressió -------
 
-    public void setTempsCompresio(double temps){
+    public void setTempsCompresio(double temps) {
         this.tempsCompresio = temps;
     }
 
-    public void setTempsDescompresio(double t){
+    public void setTempsDescompresio(double t) {
         this.tempsDescompresio = t;
     }
 
-    public double getTempsCompresio(){
+    public double getTempsCompresio() {
         return tempsCompresio;
     }
 
-    public double getTempsDescompresio(){
+    public double getTempsDescompresio() {
         return tempsDescompresio;
     }
+
+    // ------- GETTERS i SETTERS per les RUTES dels fitxers -------
 
     // Defineix la ruta del fitxer d'entrada
     public void setInput(Path p) {

@@ -18,7 +18,7 @@ public class BitInputStream implements Closeable {
     private boolean endOfStream = false; // Si hem arribat al final del flux
 
     // Constructor: rep el DataInputStream d'on llegirem
-    BitInputStream(DataInputStream in) {
+    public BitInputStream(DataInputStream in) {
         this.in = in;
     }
 
@@ -27,7 +27,7 @@ public class BitInputStream implements Closeable {
      * Retorna true si el bit és 1, false si és 0.
      * Si no queden bits o bytes per llegir, llança una excepció IOException.
      */
-    boolean readBit() throws IOException {
+    public boolean readBit() throws IOException {
         // Si ja hem gastat tots els bits del currentByte, n'hem de llegir un altre
         if (numBits == 0) {
             if (endOfStream) {

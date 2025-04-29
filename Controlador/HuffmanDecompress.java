@@ -94,27 +94,8 @@ public class HuffmanDecompress implements Notificar {
         dades.setRoot(pq.poll()); // L'últim node restant és l'arrel de l'arbre
     }
 
-    // MAIN de prova ràpida (per comprovar que la descompressió funciona)
-    /*
-     * public static void main(String[] args) throws Exception {
-     * if (args.length != 2) {
-     * System.err.println("Ús: java HuffmanDecompress <input.huff> <output>");
-     * return;
-     * }
-     * Dades dades = new Dades();
-     * dades.setInput(Path.of(args[0])); // Defineix el fitxer d'entrada (.huff)
-     * dades.setOutput(Path.of(args[1])); // Defineix el fitxer de sortida (original
-     * recuperat)
-     * HuffmanDecompress hd = new HuffmanDecompress(dades);
-     * hd.decompress(); // Fa la descompressió!
-     * System.out.println("Descompressió completada!");
-     * }
-     */
-
     @Override
     public void notificar(String s) {
-        // Aquesta funció està preparada per enviar notificacions (per exemple, a la
-        // GUI), però encara no fa res
         if (s.equals("descomprimir")) {
             try {
                 this.decompress();
